@@ -516,3 +516,414 @@ img{
     transform:translateX(6px);
 }
 
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+
+.main-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:30px;
+
+    padding:35px;
+
+    background:var(--background);
+
+    min-height:100vh;
+}
+
+
+
+/* ============================================================
+   TOP HEADER
+============================================================ */
+
+.top-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+}
+
+
+
+/* ============================================================
+   SEARCH BOX
+============================================================ */
+
+.search-box{
+
+    flex:1;
+
+    min-width:280px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    background:var(--surface);
+
+    padding:14px 18px;
+
+    border-radius:var(--radius-md);
+
+    box-shadow:var(--shadow-sm);
+
+    border:1px solid var(--border);
+
+    transition:var(--transition);
+}
+
+.search-box:focus-within{
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 4px rgba(79,70,229,.15);
+}
+
+.search-box i{
+
+    color:var(--text-light);
+
+    font-size:18px;
+}
+
+.search-box input{
+
+    flex:1;
+
+    background:transparent;
+
+    color:var(--text);
+
+    font-size:15px;
+}
+
+.search-box input::placeholder{
+
+    color:var(--text-light);
+}
+
+
+
+/* ============================================================
+   HEADER ACTIONS
+============================================================ */
+
+.header-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+.header-actions button{
+
+    width:48px;
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:var(--surface);
+
+    color:var(--text);
+
+    border:1px solid var(--border);
+
+    box-shadow:var(--shadow-sm);
+
+    font-size:18px;
+
+    transition:var(--transition);
+}
+
+.header-actions button:hover{
+
+    background:var(--primary);
+
+    color:#fff;
+
+    transform:translateY(-3px);
+}
+
+
+
+/* ============================================================
+   STATISTICS
+============================================================ */
+
+.stats-section{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+    gap:20px;
+}
+
+.stat-card{
+
+    background:var(--surface);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-lg);
+
+    padding:22px;
+
+    box-shadow:var(--shadow-sm);
+
+    transition:var(--transition);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.stat-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:4px;
+
+    background:linear-gradient(
+        to right,
+        var(--primary),
+        var(--secondary)
+    );
+}
+
+.stat-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:var(--shadow-md);
+}
+
+.stat-card h3{
+
+    font-size:15px;
+
+    color:var(--text-light);
+
+    margin-bottom:10px;
+
+    font-weight:500;
+}
+
+.stat-card p{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:var(--primary);
+}
+
+
+
+/* ============================================================
+   NOTE EDITOR
+============================================================ */
+
+.editor{
+
+    background:var(--surface);
+
+    border-radius:var(--radius-lg);
+
+    padding:28px;
+
+    border:1px solid var(--border);
+
+    box-shadow:var(--shadow-md);
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+}
+
+.editor h2{
+
+    font-size:24px;
+
+    font-weight:600;
+}
+
+
+
+/* ============================================================
+   INPUTS
+============================================================ */
+
+.editor input,
+
+.editor textarea,
+
+.editor select{
+
+    width:100%;
+
+    border:1px solid var(--border);
+
+    background:var(--surface-2);
+
+    color:var(--text);
+
+    border-radius:14px;
+
+    padding:14px 18px;
+
+    font-size:15px;
+
+    transition:var(--transition);
+}
+
+.editor input:focus,
+
+.editor textarea:focus,
+
+.editor select:focus{
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 4px rgba(79,70,229,.15);
+}
+
+
+
+/* ============================================================
+   TEXTAREA
+============================================================ */
+
+.editor textarea{
+
+    resize:vertical;
+
+    min-height:220px;
+
+    line-height:1.7;
+}
+
+
+
+/* ============================================================
+   OPTIONS
+============================================================ */
+
+.editor-options{
+
+    display:grid;
+
+    grid-template-columns:
+    180px
+    1fr
+    70px;
+
+    gap:18px;
+
+    align-items:center;
+}
+
+
+
+/* ============================================================
+   COLOR PICKER
+============================================================ */
+
+#noteColor{
+
+    cursor:pointer;
+
+    height:52px;
+
+    padding:5px;
+}
+
+
+
+/* ============================================================
+   EDITOR FOOTER
+============================================================ */
+
+.editor-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+}
+
+
+
+/* ============================================================
+   COUNTERS
+============================================================ */
+
+.counters{
+
+    display:flex;
+
+    gap:25px;
+
+    color:var(--text-light);
+
+    font-size:14px;
+
+    font-weight:500;
+}
+
+
+
+/* ============================================================
+   SAVE BUTTON
+============================================================ */
+
+#saveNoteBtn{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    min-width:180px;
+}
+
