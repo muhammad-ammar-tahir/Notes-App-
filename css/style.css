@@ -927,3 +927,579 @@ img{
     min-width:180px;
 }
 
+/* ============================================================
+   SORT SECTION
+============================================================ */
+
+.sort-section{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    gap:15px;
+}
+
+.sort-section label{
+
+    font-weight:600;
+
+    color:var(--text-light);
+}
+
+.sort-section select{
+
+    min-width:220px;
+
+    background:var(--surface);
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+    padding:12px 16px;
+
+    border-radius:12px;
+
+    transition:var(--transition);
+}
+
+.sort-section select:focus{
+
+    border-color:var(--primary);
+}
+
+
+
+/* ============================================================
+   NOTES GRID
+============================================================ */
+
+.notes-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+
+    gap:25px;
+
+    align-items:start;
+}
+
+
+
+/* ============================================================
+   NOTE CARD
+============================================================ */
+
+.note-card{
+
+    background:var(--surface);
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    padding:22px;
+
+    box-shadow:var(--shadow-sm);
+
+    transition:var(--transition);
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.note-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:var(--shadow-lg);
+}
+
+
+
+/* ============================================================
+   NOTE COLOR BAR
+============================================================ */
+
+.note-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:100%;
+
+    height:6px;
+
+    background:var(--primary);
+}
+
+
+
+/* ============================================================
+   NOTE HEADER
+============================================================ */
+
+.note-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:15px;
+}
+
+.note-title{
+
+    font-size:21px;
+
+    font-weight:600;
+
+    color:var(--text);
+
+    word-break:break-word;
+}
+
+
+
+/* ============================================================
+   NOTE DESCRIPTION
+============================================================ */
+
+.note-description{
+
+    color:var(--text-light);
+
+    line-height:1.8;
+
+    word-break:break-word;
+
+    white-space:pre-wrap;
+}
+
+
+
+/* ============================================================
+   CATEGORY BADGE
+============================================================ */
+
+.category-badge{
+
+    display:inline-block;
+
+    background:rgba(79,70,229,.12);
+
+    color:var(--primary);
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:600;
+}
+
+
+
+/* ============================================================
+   TAGS
+============================================================ */
+
+.tags{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+}
+
+.tag{
+
+    background:var(--surface-2);
+
+    border:1px solid var(--border);
+
+    color:var(--text-light);
+
+    padding:5px 12px;
+
+    border-radius:999px;
+
+    font-size:12px;
+}
+
+
+
+/* ============================================================
+   DATE
+============================================================ */
+
+.note-date{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+    font-size:13px;
+
+    color:var(--text-light);
+}
+
+
+
+/* ============================================================
+   NOTE ACTIONS
+============================================================ */
+
+.note-actions{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:auto;
+}
+
+
+
+/* ============================================================
+   ACTION BUTTONS
+============================================================ */
+
+.action-group{
+
+    display:flex;
+
+    gap:10px;
+}
+
+.action-btn{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:var(--surface-2);
+
+    color:var(--text);
+
+    border:1px solid var(--border);
+
+    transition:var(--transition);
+}
+
+.action-btn:hover{
+
+    background:var(--primary);
+
+    color:white;
+
+    transform:scale(1.08);
+}
+
+
+
+/* ============================================================
+   PINNED NOTE
+============================================================ */
+
+.note-card.pinned{
+
+    border:2px solid var(--warning);
+}
+
+
+
+/* ============================================================
+   FAVORITE NOTE
+============================================================ */
+
+.note-card.favorite{
+
+    box-shadow:0 12px 30px rgba(255,0,90,.18);
+}
+
+
+
+/* ============================================================
+   ARCHIVED NOTE
+============================================================ */
+
+.note-card.archived{
+
+    opacity:.75;
+}
+
+
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+
+.empty-state{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    padding:80px 30px;
+
+    color:var(--text-light);
+}
+
+.empty-state i{
+
+    font-size:80px;
+
+    color:var(--primary);
+
+    margin-bottom:25px;
+}
+
+.empty-state h2{
+
+    margin-bottom:10px;
+}
+
+
+
+/* ============================================================
+   MODAL
+============================================================ */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+}
+
+.modal.active{
+
+    display:flex;
+}
+
+.modal-content{
+
+    background:var(--surface);
+
+    width:90%;
+
+    max-width:420px;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:var(--shadow-lg);
+
+    animation:popup .3s ease;
+}
+
+.modal-content h2{
+
+    margin-bottom:15px;
+}
+
+.modal-content p{
+
+    color:var(--text-light);
+
+    line-height:1.7;
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:30px;
+}
+
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+.toast{
+
+    position:fixed;
+
+    top:30px;
+
+    right:30px;
+
+    background:var(--primary);
+
+    color:white;
+
+    padding:15px 24px;
+
+    border-radius:14px;
+
+    box-shadow:var(--shadow-lg);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transform:translateY(-30px);
+
+    transition:.35s;
+
+    z-index:1000;
+}
+
+.toast.show{
+
+    opacity:1;
+
+    transform:translateY(0);
+}
+
+
+
+/* ============================================================
+   ANIMATIONS
+============================================================ */
+
+@keyframes popup{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.85);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+    }
+}
+
+
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}
+
+.note-card{
+
+    animation:fadeUp .35s ease;
+}
+
+
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+
+.hidden{
+
+    display:none !important;
+}
+
+.text-center{
+
+    text-align:center;
+}
+
+.mt-20{
+
+    margin-top:20px;
+}
+
+.mb-20{
+
+    margin-bottom:20px;
+}
+
+.w-100{
+
+    width:100%;
+}
+
+
+
+/* ============================================================
+   GLASS EFFECT
+============================================================ */
+
+.glass{
+
+    background:rgba(255,255,255,.55);
+
+    backdrop-filter:blur(14px);
+
+    -webkit-backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,.2);
+}
+
