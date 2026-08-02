@@ -1537,3 +1537,15 @@ img{
     transform:translateY(-3px);
 }
 
+.delete-modal {
+
+    display: none;
+
+}
+
+.delete-modal.show {
+
+    display: flex;
+
+}
+
