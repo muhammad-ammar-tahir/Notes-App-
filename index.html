@@ -18,8 +18,7 @@
         rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
@@ -51,13 +50,13 @@
 
             <div class="modal-buttons">
 
-                <button id="cancelDelete" class="secondary-btn">
+                <button id="cancelDelete" class="btn secondary-btn" type="button">
 
                     Cancel
 
                 </button>
 
-                <button id="confirmDelete" class="danger-btn">
+                <button id="confirmDelete" class="btn danger-btn" type="button">
 
                     Delete
 
@@ -94,7 +93,7 @@
             </div>
 
 
-            <button id="newNoteBtn" class="new-note-btn">
+            <button id="newNoteBtn" class="new-note-btn" type="button">
 
                 <i class="fa-solid fa-plus"></i>
 
@@ -190,10 +189,7 @@
 
                     <i class="fa-solid fa-magnifying-glass"></i>
 
-                    <input
-                        type="text"
-                        id="searchInput"
-                        placeholder="Search notes...">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search notes...">
 
                 </div>
 
@@ -201,19 +197,19 @@
 
                 <div class="header-actions">
 
-                    <button id="importBtn" class="icon-btn" title="Import Notes" >
+                    <button id="importBtn" class="icon-btn" title="Import Notes" type="button">
 
                         <i class="fa-solid fa-file-import"></i>
 
                     </button>
 
-                    <button id="exportBtn" class="icon-btn" title="Export Notes" >
+                    <button id="exportBtn" class="icon-btn" title="Export Notes" type="button">
 
                         <i class="fa-solid fa-file-export"></i>
 
                     </button>
 
-                    <button id="themeBtn" class="icon-btn" title="Toggle Theme" >
+                    <button id="themeBtn" class="icon-btn" title="Toggle Theme" type="button">
 
                         <i class="fa-solid fa-moon"></i>
 
@@ -233,7 +229,7 @@
 
             <section class="stats-section">
 
-                <div class="stat-card">
+                <div class="stat-card total-card">
 
                     <h3>Total</h3>
 
@@ -241,7 +237,7 @@
 
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card pinned-card">
 
                     <h3>Pinned</h3>
 
@@ -249,7 +245,7 @@
 
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card favorite-card">
 
                     <h3>Favorites</h3>
 
@@ -257,7 +253,7 @@
 
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card archived-card">
 
                     <h3>Archived</h3>
 
@@ -283,16 +279,13 @@
 
                 </h2>
 
+                <label for="noteTitle">
+                    Note Title
+                </label>
+                <input type="text" class="form-control" id="noteTitle" maxlength="100" placeholder="Enter title...">
 
-                <input
-                    type="text"
-                    id="noteTitle"
-                    placeholder="Enter title...">
 
-
-                <textarea
-                    id="noteDescription"
-                    placeholder="Write your note here..."></textarea>
+                <textarea id="noteDescription" class="form-control" placeholder="Write your note here..."></textarea>
 
 
 
@@ -300,7 +293,7 @@
 
 
 
-                    <select id="category">
+                    <select id="category" class="form-control">
 
                         <option value="Work">Work</option>
 
@@ -314,17 +307,11 @@
 
 
 
-                    <input
-                        type="text"
-                        id="tags"
-                        placeholder="Tags (comma separated)">
+                    <input type="text" id="tags" class="form-control" placeholder="Tags (comma separated)">
 
 
 
-                    <input
-                        type="color"
-                        id="noteColor"
-                        value="#ffffff">
+                    <input type="color" id="noteColor" class="form-control" value="#ffffff">
 
                 </div>
 
@@ -350,7 +337,7 @@
 
 
 
-                    <button id="saveNoteBtn" class="primary-btn">
+                    <button id="saveNoteBtn" class="btn primary-btn" type="button">
 
                         <i class="fa-solid fa-floppy-disk"></i>
 
@@ -422,9 +409,7 @@
             <!-- Notes Grid -->
             <!-- ================================================ -->
 
-            <section
-                id="notesContainer"
-                class="notes-grid">
+            <section id="notesContainer" class="notes-grid">
 
                 <!-- Notes will be added dynamically -->
 
@@ -438,9 +423,7 @@
             <!-- Empty State -->
             <!-- ================================================ -->
 
-            <section
-                id="emptyState"
-                class="empty-state">
+            <section id="emptyState" class="empty-state">
 
                 <i class="fa-regular fa-note-sticky"></i>
 
@@ -466,11 +449,7 @@
 
     <!-- Hidden File Input -->
 
-    <input
-        type="file"
-        id="importFile"
-        accept=".json"
-        hidden>
+    <input type="file" id="importFile" class="form-control" accept=".json" hidden>
 
 
 
