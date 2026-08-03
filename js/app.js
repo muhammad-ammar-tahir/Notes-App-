@@ -5,575 +5,351 @@
    Main Application Logic
 ========================================================== */
 
-/* ==========================================================
-   DOM ELEMENTS
-========================================================== */
-
 const DOM = {
-  /* ==========================
-       Note Editor
-    ========================== */
-
   editorTitle: document.getElementById("editorTitle"),
-
   noteTitle: document.getElementById("noteTitle"),
-
   noteDescription: document.getElementById("noteDescription"),
-
   category: document.getElementById("category"),
-
   tags: document.getElementById("tags"),
-
   noteColor: document.getElementById("noteColor"),
 
-  /* ==========================
-       Buttons
-    ========================== */
-
   saveButton: document.getElementById("saveNoteBtn"),
-
   newNoteButton: document.getElementById("newNoteBtn"),
-
   themeButton: document.getElementById("themeBtn"),
-
   importButton: document.getElementById("importBtn"),
-
   exportButton: document.getElementById("exportBtn"),
 
-  /* ==========================
-       Search & Sort
-    ========================== */
-
   search: document.getElementById("searchInput"),
-
   sort: document.getElementById("sortNotes"),
 
-  /* ==========================
-       Counters
-    ========================== */
-
   characterCount: document.getElementById("characterCount"),
-
   wordCount: document.getElementById("wordCount"),
 
-  /* ==========================
-       Notes
-    ========================== */
-
   notesContainer: document.getElementById("notesContainer"),
-
   emptyState: document.getElementById("emptyState"),
-
-  /* ==========================
-       Statistics
-    ========================== */
+  emptyStateTitle: document.getElementById("emptyStateTitle"),
+  emptyStateMessage: document.getElementById("emptyStateMessage"),
 
   totalNotes: document.getElementById("totalNotes"),
-
   pinnedNotes: document.getElementById("pinnedNotes"),
-
   favoriteNotes: document.getElementById("favoriteNotes"),
-
   archivedNotes: document.getElementById("archivedNotes"),
 
-  /* ==========================
-       Delete Modal
-    ========================== */
-
   deleteModal: document.getElementById("deleteModal"),
-
   confirmDeleteButton: document.getElementById("confirmDelete"),
-
   cancelDeleteButton: document.getElementById("cancelDelete"),
-
-  /* ==========================
-       Toast
-    ========================== */
 
   toast: document.getElementById("toast"),
 
-  /* ==========================
-       Import File
-    ========================== */
-
   importFile: document.getElementById("importFile"),
+
+  filterItems: document.querySelectorAll("[data-filter]"),
+  categoryFilters: document.querySelectorAll("[data-category]"),
 };
 
-/* ==========================================================
-   APPLICATION
-========================================================== */
-
 const App = {
-  /* ======================================================
-       APPLICATION STATE
-    ====================================================== */
-
   state: {
     notes: [],
-
     editingNoteId: null,
-
     noteToDeleteId: null,
-
     currentFilter: "all",
-
     currentCategory: "all",
-
     currentSearch: "",
-
     currentSort: "newest",
-
     currentTheme: "light",
   },
 
-  /* ======================================================
-       INITIALIZATION
-    ====================================================== */
-
   init() {
     this.state.notes = Storage.loadNotes();
-
     this.state.currentTheme = Storage.loadTheme();
 
+    this.populateCategoryOptions();
     this.applyTheme();
-
     this.registerEvents();
-
-    // UI.renderNotes(this.state.notes);
-    // UI.updateStatistics(this.state.notes);
+    this.clearEditor();
+    this.render();
   },
-
-  /* ======================================================
-       REGISTER EVENTS
-    ====================================================== */
 
   registerEvents() {
-    /* Save */
+    DOM.saveButton.addEventListener("click", () => this.saveNote());
+    DOM.newNoteButton.addEventListener("click", () => this.clearEditor());
 
-    DOM.saveButton.addEventListener(
-      "click",
+    DOM.search.addEventListener("input", (event) => {
+      this.state.currentSearch = event.target.value.trim().toLowerCase();
+      this.render();
+    });
 
-      () => this.saveNote(),
-    );
+    DOM.sort.addEventListener("change", (event) => {
+      this.state.currentSort = event.target.value;
+      this.render();
+    });
 
-    /* New Note */
+    DOM.themeButton.addEventListener("click", () => this.toggleTheme());
+    DOM.exportButton.addEventListener("click", () => this.exportNotes());
 
-    DOM.newNoteButton.addEventListener(
-      "click",
+    DOM.importButton.addEventListener("click", () => DOM.importFile.click());
+    DOM.importFile.addEventListener("change", (event) => this.importNotes(event));
 
-      () => this.clearEditor(),
-    );
+    DOM.noteTitle.addEventListener("input", () => this.updateCounters());
+    DOM.noteDescription.addEventListener("input", () => this.updateCounters());
 
-    /* Search */
+    DOM.cancelDeleteButton.addEventListener("click", () => this.closeDeleteModal());
+    DOM.confirmDeleteButton.addEventListener("click", () => this.confirmDelete());
 
-    DOM.search.addEventListener(
-      "input",
+    DOM.deleteModal.addEventListener("click", (event) => {
+      if (event.target === DOM.deleteModal) {
+        this.closeDeleteModal();
+      }
+    });
 
-      (event) => {
-        this.state.currentSearch = event.target.value;
+    DOM.notesContainer.addEventListener("click", (event) => this.handleNoteAction(event));
 
-        this.searchNotes();
-      },
-    );
+    DOM.filterItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        this.state.currentFilter = item.dataset.filter || "all";
+        this.render();
+      });
+    });
 
-    /* Sort */
+    DOM.categoryFilters.forEach((item) => {
+      item.addEventListener("click", () => {
+        this.state.currentCategory = item.dataset.category || "all";
+        this.render();
+      });
+    });
 
-    DOM.sort.addEventListener(
-      "change",
-
-      (event) => {
-        this.state.currentSort = event.target.value;
-
-        this.sortNotes();
-      },
-    );
-
-    /* Theme */
-
-    DOM.themeButton.addEventListener(
-      "click",
-
-      () => this.toggleTheme(),
-    );
-
-    /* Export */
-
-    DOM.exportButton.addEventListener(
-      "click",
-
-      () => this.exportNotes(),
-    );
-
-    /* Import */
-
-    DOM.importButton.addEventListener(
-      "click",
-
-      () => DOM.importFile.click(),
-    );
-
-    DOM.importFile.addEventListener(
-      "change",
-
-      (event) => {
-        this.importNotes(event);
-      },
-    );
-
-    /* Counter */
-
-    DOM.noteDescription.addEventListener(
-      "input",
-
-      () => this.updateCounters(),
-    );
-
-    /* Delete Modal */
-
-    DOM.cancelDeleteButton.addEventListener(
-      "click",
-
-      () => this.closeDeleteModal(),
-    );
-
-    DOM.confirmDeleteButton.addEventListener(
-      "click",
-
-      () => this.confirmDelete(),
-    );
-
-    /* ==========================
-   Close Modal on Outside Click
-========================== */
-
-    DOM.deleteModal.addEventListener(
-      "click",
-
-      (event) => {
-        if (event.target === DOM.deleteModal) {
-          this.closeDeleteModal();
-        }
-      },
-    );
-    /* ==========================
-   Note Card Actions
-========================== */
-
-    DOM.notesContainer.addEventListener(
-      "click",
-
-      (event) => this.handleNoteAction(event),
-    );
-
-    /* ==========================
-   Escape Key
-========================== */
-
-    document.addEventListener(
-      "keydown",
-
-      (event) => {
-        if (
-          event.key === "Escape" &&
-          DOM.deleteModal.classList.contains("show")
-        ) {
-          this.closeDeleteModal();
-        }
-      },
-    );
+    document.addEventListener("keydown", (event) => this.handleKeyboardShortcut(event));
   },
 
-  /* ======================================================
-   NOTE CARD ACTIONS
-====================================================== */
+  handleKeyboardShortcut(event) {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "n") {
+      event.preventDefault();
+      this.clearEditor();
+    }
 
-  handleNoteAction(event) {
-    const button = event.target.closest("[data-action]");
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+      event.preventDefault();
+      this.saveNote();
+    }
+  },
 
-    if (!button) {
+  findNote(noteId) {
+    return this.state.notes.find((note) => note.id === noteId) || null;
+  },
+
+  render() {
+    const visibleNotes = this.getVisibleNotes();
+
+    UI.renderNotes(visibleNotes, this.state);
+    UI.updateStatistics(this.state.notes);
+    UI.setThemeButtonIcon(this.state.currentTheme);
+    UI.setActiveFilter(this.state.currentFilter);
+    UI.setActiveCategory(this.state.currentCategory);
+
+    this.updateCounters();
+    Storage.saveNotes(this.state.notes);
+  },
+
+  getVisibleNotes() {
+    const search = this.state.currentSearch.trim().toLowerCase();
+
+    let filtered = this.state.notes.filter((note) => {
+      if (this.state.currentFilter === "pinned") {
+        if (!note.pinned) return false;
+      } else if (this.state.currentFilter === "favorites") {
+        if (!note.favorite) return false;
+      } else if (this.state.currentFilter === "archived") {
+        if (!note.archived) return false;
+      }
+
+      if (this.state.currentCategory !== "all" && note.category !== this.state.currentCategory) {
+        return false;
+      }
+
+      if (!search) return true;
+
+      const haystack = [
+        note.title,
+        note.description,
+        note.category,
+        note.tags.join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(search);
+    });
+
+    switch (this.state.currentSort) {
+      case "oldest":
+        filtered = filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+      case "az":
+        filtered = filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "za":
+        filtered = filtered.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case "updated":
+        filtered = filtered.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        break;
+      default:
+        filtered = filtered.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    }
+
+    return filtered;
+  },
+
+  saveNote() {
+    if (!this.validateForm()) {
+      UI.showToast("Title and description are required.", "error");
       return;
     }
 
-    const action = button.dataset.action;
+    const noteData = {
+      title: DOM.noteTitle.value.trim(),
+      description: DOM.noteDescription.value.trim(),
+      category: DOM.category.value.trim() || "General",
+      tags: this.getTags(),
+      color: DOM.noteColor.value || "#ffffff",
+    };
 
-    const noteId = button.dataset.id;
+    const now = this.getCurrentDate();
 
-    switch (action) {
-      case "edit":
-        this.editNote(noteId);
+    if (this.state.editingNoteId) {
+      this.state.notes = this.state.notes.map((note) =>
+        note.id === this.state.editingNoteId
+          ? { ...note, ...noteData, updatedAt: now }
+          : note,
+      );
+      UI.showToast("Note updated successfully.");
+    } else {
+      const newNote = {
+        id: this.generateId(),
+        ...noteData,
+        pinned: false,
+        favorite: false,
+        archived: false,
+        createdAt: now,
+        updatedAt: now,
+      };
 
-        break;
-
-      case "delete":
-        this.openDeleteModal(noteId);
-
-        break;
-
-      case "pin":
-        this.togglePin(noteId);
-
-        break;
-
-      case "favorite":
-        this.toggleFavorite(noteId);
-
-        break;
-
-      case "archive":
-        this.toggleArchive(noteId);
-
-        break;
+      this.state.notes.unshift(newNote);
+      UI.showToast("Note created successfully.");
     }
-  },
 
-  /* ======================================================
-   NOTE ACTIONS
-====================================================== */
+    this.state.editingNoteId = null;
+    this.clearEditor();
+    this.render();
+  },
 
   editNote(noteId) {
-    const note = this.state.notes.find((note) => note.id === noteId);
+    const note = this.findNote(noteId);
 
-    if (!note) {
-      return;
-    }
+    if (!note) return;
 
     this.state.editingNoteId = note.id;
 
     DOM.editorTitle.textContent = "Edit Note";
-
     DOM.noteTitle.value = note.title;
-
     DOM.noteDescription.value = note.description;
-
-    DOM.category.value = note.category;
-
+    DOM.category.value = note.category || "General";
     DOM.tags.value = note.tags.join(", ");
+    DOM.noteColor.value = note.color || "#ffffff";
 
-    DOM.noteColor.value = note.color;
-
-    DOM.saveButton.innerHTML = `<i class="fa-solid fa-pen"></i> Update Note`;
+    DOM.saveButton.innerHTML = '<i class="fa-solid fa-pen"></i> Update Note';
 
     this.updateCounters();
-
     DOM.noteTitle.focus();
   },
 
   openDeleteModal(noteId) {
     this.state.noteToDeleteId = noteId;
-
     DOM.deleteModal.classList.add("show");
   },
 
   closeDeleteModal() {
     this.state.noteToDeleteId = null;
-
     DOM.deleteModal.classList.remove("show");
   },
 
   confirmDelete() {
-    if (!this.state.noteToDeleteId) {
-      return;
-    }
+    if (!this.state.noteToDeleteId) return;
 
-    this.state.notes = this.state.notes.filter(
-      (note) => note.id !== this.state.noteToDeleteId,
-    );
+    this.state.notes = this.state.notes.filter((note) => note.id !== this.state.noteToDeleteId);
 
-    this.refreshApp();
-
+    this.state.noteToDeleteId = null;
+    this.render();
     this.closeDeleteModal();
-
     UI.showToast("Note deleted successfully.");
   },
 
   togglePin(noteId) {
-    const note = this.state.notes.find((note) => note.id === noteId);
-
-    if (!note) {
-      return;
-    }
+    const note = this.findNote(noteId);
+    if (!note) return;
 
     note.pinned = !note.pinned;
-
-    this.refreshApp();
-
+    note.updatedAt = this.getCurrentDate();
+    this.render();
     UI.showToast(note.pinned ? "Note pinned." : "Note unpinned.");
   },
 
   toggleFavorite(noteId) {
-    const note = this.state.notes.find((note) => note.id === noteId);
+    const note = this.findNote(noteId);
+    if (!note) return;
 
-    if (!note) {
-      return;
-    }
-
-    UI.showToast(
-      note.favorite ? "Added to favorites." : "Removed from favorites.",
-    );
+    note.favorite = !note.favorite;
+    note.updatedAt = this.getCurrentDate();
+    this.render();
+    UI.showToast(note.favorite ? "Added to favorites." : "Removed from favorites.");
   },
 
   toggleArchive(noteId) {
-    const note = this.state.notes.find((note) => note.id === noteId);
+    const note = this.findNote(noteId);
+    if (!note) return;
 
-    if (!note) {
-      return;
-    }
-
+    note.archived = !note.archived;
+    note.updatedAt = this.getCurrentDate();
+    this.render();
     UI.showToast(note.archived ? "Note archived." : "Note restored.");
   },
-  /* ======================================================
-       THEME
-    ====================================================== */
 
   applyTheme() {
-    document.body.classList.toggle(
-      "dark",
-
-      this.state.currentTheme === "dark",
-    );
+    document.body.classList.toggle("dark", this.state.currentTheme === "dark");
   },
 
   toggleTheme() {
-    this.state.currentTheme =
-      this.state.currentTheme === "light" ? "dark" : "light";
-
-    this.applyTheme();
-
+    this.state.currentTheme = this.state.currentTheme === "dark" ? "light" : "dark";
     Storage.saveTheme(this.state.currentTheme);
-  },
-
-  /* ======================================================
-   CRUD OPERATIONS
-====================================================== */
-
-  saveNote() {
-    if (!this.validateForm()) {
-      return;
-    }
-
-    if (this.state.editingNoteId) {
-      this.updateNote();
-    } else {
-      this.createNote();
-    }
-  },
-
-  createNote() {
-    const newNote = {
-      id: this.generateId(),
-
-      title: DOM.noteTitle.value.trim(),
-
-      description: DOM.noteDescription.value.trim(),
-
-      category: DOM.category.value,
-
-      tags: this.getTags(),
-
-      color: DOM.noteColor.value,
-
-      pinned: false,
-
-      favorite: false,
-
-      archived: false,
-
-      createdAt: this.getCurrentDate(),
-
-      updatedAt: this.getCurrentDate(),
-    };
-
-    this.state.notes.unshift(newNote);
-
-    this.refreshApp();
-
-    this.clearEditor();
-  },
-
-  updateNote() {
-    const note = this.state.notes.find(
-      (note) => note.id === this.state.editingNoteId,
-    );
-
-    if (!note) {
-      return;
-    }
-
-    note.title = DOM.noteTitle.value.trim();
-
-    note.description = DOM.noteDescription.value.trim();
-
-    note.category = DOM.category.value;
-
-    note.tags = this.getTags();
-
-    note.color = DOM.noteColor.value;
-
-    note.updatedAt = this.getCurrentDate();
-
-    this.state.editingNoteId = null;
-
-    this.refreshApp();
-
-    this.clearEditor();
+    this.applyTheme();
+    UI.setThemeButtonIcon(this.state.currentTheme);
+    UI.showToast(`Theme switched to ${this.state.currentTheme}.`);
   },
 
   clearEditor() {
-    DOM.editorTitle.textContent = "Create New Note";
-
-    DOM.noteTitle.value = "";
-
-    DOM.noteDescription.value = "";
-
-    DOM.category.selectedIndex = 0;
-
-    DOM.tags.value = "";
-
-    DOM.noteColor.value = "#ffffff";
-
-    DOM.characterCount.textContent = "Characters : 0";
-
-    DOM.wordCount.textContent = "Words : 0";
-
     this.state.editingNoteId = null;
-
-    DOM.saveButton.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save Note`;
+    DOM.editorTitle.textContent = "Create New Note";
+    DOM.noteTitle.value = "";
+    DOM.noteDescription.value = "";
+    DOM.category.value = "General";
+    DOM.tags.value = "";
+    DOM.noteColor.value = "#ffffff";
+    DOM.saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Note';
+    this.updateCounters();
+    DOM.noteTitle.focus();
   },
 
-  /* ======================================================
-   HELPER METHODS
-====================================================== */
-
   validateForm() {
-    if (DOM.noteTitle.value.trim() === "") {
-      UI.showToast(
-        "Please enter a note title.",
-
-        "error",
-      );
-
-      DOM.noteTitle.focus();
-
-      return false;
-    }
-
-    if (DOM.noteDescription.value.trim() === "") {
-      UI.showToast(
-        "Please enter a description.",
-
-        "error",
-      );
-
-      DOM.noteDescription.focus();
-
-      return false;
-    }
-
-    return true;
+    const title = DOM.noteTitle.value.trim();
+    const description = DOM.noteDescription.value.trim();
+    return title.length > 0 && description.length > 0;
   },
 
   generateId() {
-    return crypto.randomUUID();
+    if (window.crypto && window.crypto.randomUUID) {
+      return window.crypto.randomUUID();
+    }
+    return `note-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   },
 
   getCurrentDate() {
@@ -582,156 +358,117 @@ const App = {
 
   getTags() {
     return DOM.tags.value
-
       .split(",")
-
       .map((tag) => tag.trim())
-
-      .filter((tag) => tag !== "");
+      .filter(Boolean);
   },
 
-  /* ======================================================
-   REFRESH APPLICATION
-====================================================== */
+  updateCounters() {
+    const titleText = DOM.noteTitle.value.trim();
+    const descriptionText = DOM.noteDescription.value.trim();
+    const combined = `${titleText} ${descriptionText}`.trim();
 
-  refreshApp() {
-    Storage.saveNotes(this.state.notes);
+    const chars = combined.length;
+    const words = combined ? combined.split(/\s+/).length : 0;
 
-    const visibleNotes = this.getVisibleNotes();
-
-    UI.renderNotes(visibleNotes);
-
-    UI.updateStatistics(this.state.notes);
+    DOM.characterCount.textContent = `${chars} chars`;
+    DOM.wordCount.textContent = `${words} words`;
   },
-
-  //  for search notes
-
-  searchNotes() {
-    UI.renderNotes(this.getVisibleNotes());
-  },
-
-  //  for sort notes
-
-  sortNotes() {
-    UI.renderNotes(this.getVisibleNotes());
-  },
-
-  //  for export notes
 
   exportNotes() {
     Storage.exportNotes(this.state.notes);
+    UI.showToast("Notes exported successfully.");
   },
-
-  // for import notes
 
   importNotes(event) {
     const file = event.target.files[0];
+    if (!file) return;
 
-    Storage.importNotes(
-      file,
-
-      (importedNotes) => {
-        this.state.notes = importedNotes;
-
-        this.refreshApp();
-      },
-    );
+    Storage.importNotes(file, (importedNotes) => {
+      this.state.notes = importedNotes.map((note, index) => this.normalizeNote(note, index));
+      this.state.editingNoteId = null;
+      this.state.noteToDeleteId = null;
+      this.clearEditor();
+      this.render();
+      UI.showToast("Notes imported successfully.");
+    });
 
     event.target.value = "";
   },
 
-  // update counters for character and word count
-
-  updateCounters() {
-    const text = DOM.noteDescription.value;
-
-    DOM.characterCount.textContent = `Characters : ${text.length}`;
-
-    const words = text
-
-      .trim()
-
-      .split(/\s+/)
-
-      .filter((word) => word !== "");
-
-    DOM.wordCount.textContent = `Words : ${words.length}`;
+  normalizeNote(note, index) {
+    return {
+      id: note.id || this.generateId(),
+      title: note.title || "Untitled Note",
+      description: note.description || "",
+      category: note.category || "General",
+      tags: Array.isArray(note.tags) ? note.tags : [],
+      color: note.color || "#ffffff",
+      pinned: Boolean(note.pinned),
+      favorite: Boolean(note.favorite),
+      archived: Boolean(note.archived),
+      createdAt: note.createdAt || this.getCurrentDate(),
+      updatedAt: note.updatedAt || this.getCurrentDate(),
+    };
   },
 
-  /* ======================================================
-   GET VISIBLE NOTES
-====================================================== */
+  populateCategoryOptions() {
+    const categories = [
+      "General",
+      "Work",
+      "Study",
+      "Personal",
+      "Shopping",
+      ...this.state.notes.map((note) => note.category).filter(Boolean),
+    ];
 
-  getVisibleNotes() {
-    let notes = [...this.state.notes];
+    const uniqueCategories = [...new Set(categories.map((item) => item.trim()).filter(Boolean))];
 
-    /* ==========================
-       Search
-    ========================== */
+    DOM.category.innerHTML = uniqueCategories
+      .map((category) => `<option value="${this.escapeHTML(category)}">${this.escapeHTML(category)}</option>`)
+      .join("");
 
-    if (this.state.currentSearch.trim() !== "") {
-      const searchText = this.state.currentSearch.toLowerCase().trim();
-
-      notes = notes.filter((note) => {
-        return (
-          note.title.toLowerCase().includes(searchText) ||
-          note.description.toLowerCase().includes(searchText) ||
-          note.category.toLowerCase().includes(searchText) ||
-          note.tags.some((tag) => tag.toLowerCase().includes(searchText))
-        );
-      });
+    if (!uniqueCategories.includes(DOM.category.value)) {
+      DOM.category.value = "General";
     }
-
-    /* ==========================
-       Category
-    ========================== */
-
-    if (this.state.currentCategory !== "all") {
-      notes = notes.filter(
-        (note) => note.category === this.state.currentCategory,
-      );
-    }
-
-    /* ==========================
-       Sorting
-    ========================== */
-
-    switch (this.state.currentSort) {
-      case "newest":
-        notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        break;
-
-      case "oldest":
-        notes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-        break;
-
-      case "title":
-        notes.sort((a, b) => a.title.localeCompare(b.title));
-
-        break;
-    }
-
-    return notes;
   },
 
-  /* ======================================================
-       PLACEHOLDERS
-       (Implemented in next parts)
-    ====================================================== */
+  escapeHTML(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  },
 
-  closeDeleteModal() {},
+  handleNoteAction(event) {
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
 
-  confirmDelete() {},
+    const action = button.dataset.action;
+    const noteId = button.dataset.id;
+
+    switch (action) {
+      case "edit":
+        this.editNote(noteId);
+        break;
+      case "pin":
+        this.togglePin(noteId);
+        break;
+      case "favorite":
+        this.toggleFavorite(noteId);
+        break;
+      case "archive":
+        this.toggleArchive(noteId);
+        break;
+      case "delete":
+        this.openDeleteModal(noteId);
+        break;
+      default:
+        break;
+    }
+  },
 };
 
-/* ==========================================================
-   START APPLICATION
-========================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-
-  () => App.init(),
-);
+document.addEventListener("DOMContentLoaded", () => App.init());
